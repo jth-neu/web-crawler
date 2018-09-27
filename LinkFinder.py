@@ -2,6 +2,7 @@ from html.parser import HTMLParser
 from urllib import parse
 
 
+# Use HTMLParser to get all the links on a web page
 class LinkFinder(HTMLParser):
 
     def __init__(self, base_url):
