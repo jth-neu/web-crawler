@@ -19,6 +19,7 @@ class Crawler:
         self.min_bytes = float('Inf')
         self.total_bytes = 0
         self.crawl_counter = 0
+        self.max_depth_reached = 0
         self.boot()
 
     def boot(self):
@@ -33,12 +34,13 @@ class Crawler:
         while self.current_depth < self.max_depth:
             current_links = []
             for link in self.depth_links[self.current_depth]:
+                if self.crawl_counter >= page_numbers:
+                    self.max_depth_reached = self.current_depth
+                    break
                 print('Now crawling : ' + link + '| Current Depth :' + str(self.current_depth + 1))
                 current_links.extend(self.filter_links(self.get_page_content(link)))
                 self.crawled.add(link)
                 time.sleep(1)
-                if len(self.crawled) >= page_numbers:
-                    break
             self.current_depth += 1
             self.depth_links.append(current_links)
             self.update_files()
@@ -79,7 +81,7 @@ class Crawler:
     def update_files(self):
         set_to_file(self.crawled, self.crawled_file)
         avg_byte_size = self.total_bytes / self.crawl_counter
-        save_stats(self.stats_file, self.max_bytes, self.min_bytes, avg_byte_size, self.current_depth)
+        save_stats(self.stats_file, self.max_bytes, self.min_bytes, avg_byte_size, self.max_depth_reached)
 
     def update_stats(self, html_bytes):
         byte_size = len(html_bytes)
@@ -94,8 +96,6 @@ class Crawler:
         create_page_file(self.project_name, self.crawl_counter, html_string)
 
 
-c1 = Crawler('wiki', 'https://en.wikipedia.org/wiki/Stephen_Robertson_%28computer_scientist%29', 2)
-c1.crawl(10)
 
 
 
