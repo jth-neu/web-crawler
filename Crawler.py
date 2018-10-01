@@ -6,6 +6,7 @@ import time
 
 class Crawler:
 
+    # Initialize Crawler class variables
     def __init__(self, project_name, base_url, max_depth):
         self.project_name = project_name
         self.base_url = base_url
@@ -22,6 +23,7 @@ class Crawler:
         self.max_depth_reached = 0
         self.boot()
 
+    # Calling Utils functions to create output directory and files.
     def boot(self):
         create_project_dir(self.project_name)
         create_files(self.project_name)
@@ -30,6 +32,7 @@ class Crawler:
         self.depth_links.append(initial_set)
         self.crawled = file_to_set(self.crawled_file)
 
+    # Crawl the given amount of page, the default max depth is 5
     def crawl(self, page_numbers):
         while self.current_depth < self.max_depth:
             current_links = []
@@ -45,6 +48,7 @@ class Crawler:
             self.depth_links.append(current_links)
             self.update_files()
 
+    # Get page content from HTTP response
     def get_page_content(self, page_url):
         html_string = ''
         try:
@@ -61,6 +65,7 @@ class Crawler:
             return set()
         return finder.page_links()
 
+    # Filter the links according to requirements
     def filter_links(self, links):
         filtered_links = set()
         for link in links:
@@ -78,11 +83,13 @@ class Crawler:
             filtered_links.add(link)
         return filtered_links
 
+    # Update output files
     def update_files(self):
         set_to_file(self.crawled, self.crawled_file)
         avg_byte_size = self.total_bytes / self.crawl_counter
         save_stats(self.stats_file, self.max_bytes, self.min_bytes, avg_byte_size, self.max_depth_reached)
 
+    # Update the stats variables
     def update_stats(self, html_bytes):
         byte_size = len(html_bytes)
         if byte_size > self.max_bytes:
@@ -92,6 +99,7 @@ class Crawler:
         self.total_bytes += byte_size
         self.crawl_counter += 1
 
+    # Save each crawled page
     def save_content(self, html_string):
         create_page_file(self.project_name, self.crawl_counter, html_string)
 

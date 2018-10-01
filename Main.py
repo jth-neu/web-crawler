@@ -6,9 +6,10 @@ parser.add_argument("SeedUrl", help="The starting page of the crawling")
 parser.add_argument("Numpages", help='The number of pages for the crawling', type=int)
 args = parser.parse_args()
 print('The Starting page is :' + args.SeedUrl)
-print('The number of pages is :' + str(args.Numpages))
+print('The number of pages is : ' + str(args.Numpages))
 
 
+# Take user input and start the crawling
 def start(url, numpages):
     if url != '' and numpages > 0:
         crawler = Crawler('Output', url, 5)
